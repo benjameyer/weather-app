@@ -4,73 +4,11 @@ import { useEffect, useRef, useState } from "react"
 import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import TodayWeather from "./TodayWeather"
-import ForecastContainer from "./ForecastContainer"
+import Forecast from "./Forecast"
+
+import type { Weather } from "../util/apiDef"
 
 const API_KEY = import.meta.env.VITE_API_KEY;
-
-
-interface Weather {
-  location: Location,
-  current: Current,
-  forecast: Forecast,
-}
-
-interface Location {
-  country: string,
-  lat: number,
-  localtime: string,
-  localtime_epoch: number,
-  lon: number,
-  name: string,
-  region: string,
-  tz_id: string
-}
-
-interface Current {
-  condition: Condition,
-  feelslike_c: number,
-  gust_kph: number,
-  humidity: number,
-  is_day: number,
-  last_updated: string,
-  last_updated_epoch: number,
-  pressure_mb: number,
-  temp_c: number,
-  vis_km: number,
-  wind_kph: number
-}
-interface Condition {
-  icon: string,
-  text: string
-}
-
-interface Forecast {
-  forecastday: ForecastDay[]
-}
-interface ForecastDay {
-  astro: unknown,
-  date: string,
-  date_epoch: number,
-  day: Day,
-  hour: Hour[]
-}
-interface Day {
-  avghumidity: number,
-  avgtemp_c: number,
-  condition: Condition,
-  daily_chance_of_rain: number,
-  maxtemp_c: number,
-  maxwind_kph: number,
-  mintemp_c: number
-}
-interface Hour {
-  condition: Condition,
-  diff_rad: number,
-  is_day: number,
-  short_rad: number,
-  temp_c: number,
-  time: string
-}
 
 export default function Weather({ country }: WeatherProps) {
 
@@ -87,7 +25,6 @@ export default function Weather({ country }: WeatherProps) {
       await axios.get(API_URL)
         .then(res => {
           setWeatherData(res.data);
-          console.log(res.data);
         })
         .catch(err => {
           console.log(err.response.data.message);
@@ -98,7 +35,7 @@ export default function Weather({ country }: WeatherProps) {
   }, [API_URL]);
 
   return (
-    <div id="background" className="pt-40 sm:pt-32 min-h-screen bg-gray-200 flex flex-col items-center">
+    <div id="background" className="pt-40 pb-10 sm:pt-32 min-h-screen bg-gray-200 flex flex-col items-center">
       {(errorAlert === true) && (
         <div ref={errorDiv} className="transition-all absolute bg-white rounded-xl top-4 error-alert">
           <Alert variant="destructive">
@@ -110,14 +47,21 @@ export default function Weather({ country }: WeatherProps) {
           </Alert>
         </div>
         )}
-      <TodayWeather location={weatherData?.location.name as string} />
-      <ForecastContainer />
-      <ForecastContainer />
-      <ForecastContainer />
+      {
+        weatherData &&
+        <>
+          <TodayWeather location={weatherData.location} current={weatherData.current} forecast={weatherData.forecast} />
+          <Forecast forecast={weatherData.forecast}/>
+        </>
+        ||
+        <div className="h-96 flex justify-center items-center text-3xl">
+          <img className="animate-spin w-14 mr-4" src="/sun-icon.png" alt="sun-icon" />
+        </div>
+      }
     </div>
   )
 }
 
 interface WeatherProps {
-  country: string
+  country: string,
 }

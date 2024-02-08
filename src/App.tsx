@@ -10,6 +10,9 @@ export default function App() {
     <>
       <Navbar setCountry={setCountry}/>
       <Weather country={country}/>
+      <footer className="h-9 flex items-center justify-center">
+        <p className="text-gray-400">Benjamin Meyer - 2024</p>
+      </footer>
     </>
   )
 }
