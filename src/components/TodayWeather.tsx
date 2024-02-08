@@ -9,7 +9,7 @@ export default function TodayWeather({ location, current, forecast }: TodaysWeat
     return (
         <div className="shadow-md lg:h-96 w-11/12 lg:w-4/6 mb-10 bg-white p-8 rounded-md flex flex-col lg:flex-row">
             <div className="lg:w-1/2">
-                <h2 className="font-bold text-5xl mb-4">{dayNames[(new Date(location.localtime)).getDay()]}</h2>
+                <h2 className="font-bold text-5xl mb-4">{dayNames[(new Date(forecast.forecastday[0].hour[1].time)).getDay()]}</h2>
                 <h4 className="font-semibold text-xl"><i className="fa-solid fa-location-dot"></i> {location.name}, {location.country}</h4>
                 <div className="flex items-center mt-2">
                     <i className="font-semibold fa-regular fa-clock mr-1 pt-0.5"></i>
